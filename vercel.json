@@ -1,0 +1,16 @@
+{
+  "name": "Cedi-Search Search Suggestion Services",
+  "version": 2,
+  "builds": [
+    {
+      "src": "*.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "(.*)",
+      "dest": "app.py"
+    }
+  ]
+}
