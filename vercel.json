@@ -1,6 +1,6 @@
 {
   "name": "Cedi-Search Search Suggestion Service",
-  "version": 2,
+  "version": 1,
   "builds": [
     {
       "src": "*.py",
