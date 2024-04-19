@@ -85,4 +85,5 @@ def get_search(query: str = Query()):
 
 @app.get("/product/{id}")
 def get_product(id: str = Path()):
-    return firestore.client().collection("products").document(id).get().to_dict()
+    client = firestore.client()
+    return client.collection("products").document(id).get().to_dict()
