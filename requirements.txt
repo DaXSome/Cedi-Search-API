@@ -46,6 +46,7 @@ pydantic-extra-types==2.6.0
 pydantic-settings==2.2.1
 pydantic_core==2.18.1
 PyJWT==2.8.0
+pymongo==4.7.3
 pyparsing==3.1.2
 python-dotenv==1.0.1
 python-multipart==0.0.9
