@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Query, Path
 from fastapi.middleware.cors import CORSMiddleware
-from algoliasearch.search_client import SearchClient
+from algoliasearch.search.client import SearchClientSync
 from dotenv import load_dotenv
 from os import getenv
 from pymongo import MongoClient
@@ -22,10 +22,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-algolia_client = SearchClient.create(
-    getenv("ALGOLIA_APP_ID"), getenv("ALGOLIA_API_KEY"))
-
-algolia_index = algolia_client.init_index("products")
+algolia_client = SearchClientSync(getenv("ALGOLIA_APP_ID"), getenv("ALGOLIA_API_KEY"))
 
 mongo_client = MongoClient(getenv("DB_URI"))
 database = mongo_client["cedi_search"]
@@ -35,27 +32,42 @@ search_params = {
     'restrictSearchableAttributes': ['name']
 }
 
+def run_query(query):
+        return algolia_client.search({
+        "requests": [
+            {
+                "indexName": "products",
+                "query": query
+            }
+        ]
+
+    }).to_dict()["results"][0]["hits"]
+
+
 
 @app.get("/")
 def read_root(query: str = Query()):
     suggestions = []
-    for suggestion in algolia_index.search(query, search_params)["hits"]:
-        suggestions.append(suggestion["name"])
 
-    return suggestions
+    results = run_query(query)
+
+    return [suggestion["name"] for suggestion in results]
 
 
 @app.get("/search")
 def get_search(query: str = Query()):
     products = []
 
-    for product in algolia_index.search(query, search_params)["hits"]:
+    results = run_query(query)
+
+
+    for product in results:
 
         products.append({
             "name": product["name"],
             "price": float(product["price"]),
             "rating": product["rating"],
-            "image": product["images"][0],
+            "image": "" if len(product["images"]) == 0 else product["images"][0],
             "id": product["objectID"],
             "slug": product["slug"]
         })
