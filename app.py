@@ -77,4 +77,8 @@ def get_search(query: str = Query()):
 
 @app.get("/product/{slug}")
 def get_product(slug: str = Path()):
-    return collection.find_one({"slug": slug})
+    doc = collection.find_one({"slug": slug})
+
+    doc["_id"] = str(doc["_id"])
+
+    return doc
